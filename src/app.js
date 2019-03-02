@@ -1,3 +1,4 @@
+//fill the main screen
 let tetris = document.createElement('div');
 tetris.classList.add('tetris');
 
@@ -20,61 +21,20 @@ for(let y = 18; y > 0; y--) {
 		i++;
 	}
 }
-
+//create a tetraminos
 let x = 5, y = 15;
-let mainArr = [
-	// column
-	[
-		[0,1],
-		[0,2],
-		[0,3]
-	],
-	// square
-	[
-		[1,0],
-		[0,1],
-		[1,1]
-	],
-	// letter L
-	[
-		[1,0],
-		[0,1],
-		[0,2]
-	],
-	// reverse letter L
-	[
-		[1,0],
-		[1,1],
-		[1,2]
-	],
-	// left z
-	[
-		[1,0],
-		[1,1],
-		[2,1]
-	],
-	// rigth z
-	[
-		[1,0],
-		[-1,1],
-		[0,1]
-	],
-	// lego
-	[
-		[1,0],
-		[2,0],
-		[1,1]
-	],
-];
+let mainArr=[[[0,1],[0,2],[0,3],[[-1,1],[0,0],[1,-1],[2,-2]],[[1,-1],[0,0],[-1,1],[-2,2]],[[-1,1],[0,0],[1,-1],[2,-2]],[[1,-1],[0,0],[-1,1],[-2,2]]],[[1,0],[0,1],[1,1],[[0,0],[0,0],[0,0],[0,0]],[[0,0],[0,0],[0,0],[0,0]],[[0,0],[0,0],[0,0],[0,0]],[[0,0],[0,0],[0,0],[0,0]]],[[1,0],[0,1],[0,2],[[0,0],[-1,1],[1,0],[2,-1]],[[1,-1],[1,-1],[-1,0],[-1,0]],[[-1,0],[0,-1],[2,-2],[1,-1]],[[0,-1],[0,-1],[-2,0],[-2,0]]],[[1,0],[1,1],[1,2],[[0,0],[0,0],[1,-1],[-1,-1]],[[0,-1],[-1,0],[-2,1],[1,0]],[[2,0],[0,0],[1,-1],[1,-1]],[[-2,0],[1,-1],[0,0],[-1,1]]],[[1,0],[1,1],[2,1],[[2,-1],[0,0],[1,-1],[-1,0]],[[-2,0],[0,-1],[-1,0],[1,-1]],[[2,-1],[0,0],[1,-1],[-1,0]],[[-2,0],[0,-1],[-1,0],[1,-1]]],[[1,0],[-1,1],[0,1],[[0,-1],[-1,0],[2,-1],[1,0]],[[0,0],[1,-1],[-2,0],[-1,-1]],[[0,-1],[-1,0],[2,-1],[1,0]],[[0,0],[1,-1],[-2,0],[-1,-1]]],[[1,0],[2,0],[1,1],[[1,-1],[0,0],[0,0],[0,0]],[[0,0],[-1,0],[-1,0],[1,-1]],[[1,-1],[1,-1],[1,-1],[0,0]],[[-2,0],[0,-1],[0,-1],[-1,-1]]],]
 
 let currentFigure = 0;
 let figureBody = 0;
+let rotate = 1;
 
 function create() {
 	function getRandom() {
 		return Math.round(Math.random()*(mainArr.length-1));
 	}
-
+	
+	rotate = 1;
 	currentFigure = getRandom();
 
 	figureBody = [
@@ -152,14 +112,14 @@ window.addEventListener('keydown', function (e) {
 			document.querySelector(`[posX = '${+coordinates1[0] + a}'][posY = '${coordinates1[1]}']`),
 			document.querySelector(`[posX = '${+coordinates2[0] + a}'][posY = '${coordinates2[1]}']`),
 			document.querySelector(`[posX = '${+coordinates3[0] + a}'][posY = '${coordinates3[1]}']`),
-			document.querySelector(`[posX = '${+coordinates4[0] + a}'][posY = '${coordinates4[1]}']`),
+			document.querySelector(`[posX = '${+coordinates4[0] + a}'][posY = '${coordinates4[1]}']`)
 		];
 
 		for(let i = 0; i < figureNew.length; i++) {
 			if(!figureNew[i] ||
 				figureNew[i].classList.contains('set')) {
-					flag = false;
-				}
+				flag = false;
+			}
 		}
 
 		if(flag) {
@@ -181,6 +141,40 @@ window.addEventListener('keydown', function (e) {
 		getNewState(1);
 	} else if(e.keyCode == 40) {
 		move();
+	} else if(e.keyCode == 38) {
+		flag = true;
+
+		let figureNew = [
+			document.querySelector(`[posX = '${+coordinates1[0] + mainArr[currentFigure][rotate + 2][0][0]}'][posY = '${+coordinates1[1] + mainArr[currentFigure][rotate + 2][0][1]}']`),
+			document.querySelector(`[posX = '${+coordinates2[0] + mainArr[currentFigure][rotate + 2][1][0]}'][posY = '${+coordinates2[1] + mainArr[currentFigure][rotate + 2][1][1]}']`),
+			document.querySelector(`[posX = '${+coordinates3[0] + mainArr[currentFigure][rotate + 2][2][0]}'][posY = '${+coordinates3[1] + mainArr[currentFigure][rotate + 2][2][1]}']`),
+			document.querySelector(`[posX = '${+coordinates4[0] + mainArr[currentFigure][rotate + 2][3][0]}'][posY = '${+coordinates4[1] + mainArr[currentFigure][rotate + 2][3][1]}']`)
+		];
+
+		for(let i = 0; i < figureNew.length; i++) {
+			if(!figureNew[i] ||
+				figureNew[i].classList.contains('set')) {
+				flag = false;
+			}
+		}
+
+		if(flag) {
+			for(let i = 0; i < figureBody.length; i++) {
+				figureBody[i].classList.remove('figure');
+			}
+
+			figureBody = figureNew;
+
+			for(let i = 0; i < figureBody.length; i++) {
+				figureBody[i].classList.add('figure');
+			}
+
+			if(rotate < 4) {
+				rotate++;
+			} else {
+				rotate = 1;
+			}
+		}
 	}
 
 })
